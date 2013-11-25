@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<launch>
+        <node pkg="nodelet" type="nodelet" name="Image2RTSPNodelet" args="load image2rtsp/Image2RTSPNodelet camera_nodelet_manager" output="screen">
+        </node>
+</launch>
