@@ -43,7 +43,7 @@ static void client_options(GstRTSPClient *client, GstRTSPClientState *state, Ima
 
 
 static void new_client(GstRTSPServer *server, GstRTSPClient *client, Image2RTSPNodelet *nodelet) {
-	printf("New client\n");
+	ROS_INFO("New client\n");
 	g_signal_connect(client, "options-request", G_CALLBACK(client_options), nodelet);
 	g_signal_connect(client, "closed", G_CALLBACK(client_closed), nodelet);
 }
@@ -73,7 +73,7 @@ static void media_configure(GstRTSPMediaFactory *factory, GstRTSPMedia *media, G
 }
 
 
-void Image2RTSPNodelet::rtsp_server_add_url(char *url, char *sPipeline, GstElement **appsrc) {
+void Image2RTSPNodelet::rtsp_server_add_url(const char *url, const char *sPipeline, GstElement **appsrc) {
 	GstRTSPMediaMapping *mapping;
 	GstRTSPMediaFactory *factory;
 

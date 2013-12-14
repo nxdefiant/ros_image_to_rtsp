@@ -1,5 +1,10 @@
 <?xml version="1.0"?>
 <launch>
         <node pkg="nodelet" type="nodelet" name="Image2RTSPNodelet" args="load image2rtsp/Image2RTSPNodelet camera_nodelet_manager" output="screen">
+		<param name="mountpoint_1" type="str" value="/rgb" />
+		<param name="pipeline_1" type="str" value="( appsrc name=imagesrc is-live=true do-timestamp=true caps=video/x-raw-rgb,bpp=24,depth=24,endianness=4321,red_mask=0x00ff0000,green_mask=0x0000ff00,blue_mask=0x000000ff,width=320,height=240,framerate=10/1 ! ffmpegcolorspace ! x264enc tune=fastdecode speed-preset=slow bitrate=4096 ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )" />
+
+		<param name="mountpoint_2" type="str" value="/ir" />
+		<param name="pipeline_2" type="str" value="( appsrc name=imagesrc is-live=true do-timestamp=true caps=video/x-raw-bayer,format=(string)grbg,width=320,height=240,framerate=10/1 ! bayer2rgb ! ffmpegcolorspace ! x264enc tune=fastdecode speed-preset=slow bitrate=4096 ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )" />
         </node>
 </launch>

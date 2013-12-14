@@ -14,19 +14,27 @@ using namespace std;
 using namespace image2rtsp;
 
 void Image2RTSPNodelet::onInit() {
+	string mountpoint_1, mountpoint_2;
+	string pipeline_1, pipeline_2;
+
 	NODELET_DEBUG("Initializing image2rtsp nodelet...");
 
 	num_rgb = 0;
 	appsrc_rgb = NULL;
 	num_ir = 0;
 	appsrc_ir = NULL;
+	ros::NodeHandle& node = getPrivateNodeHandle();
 
 	video_mainloop_start();
 	rtsp_server = rtsp_server_create();
 
-	rtsp_server_add_url((char*)"/rgb", (char*)"( appsrc name=imagesrc is-live=true do-timestamp=true caps=video/x-raw-rgb,bpp=24,depth=24,endianness=4321,red_mask=0x00ff0000,green_mask=0x0000ff00,blue_mask=0x000000ff,width=320,height=240,framerate=10/1 ! ffmpegcolorspace ! ducatih264enc rate-preset=low-delay level=20 ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )", (GstElement **)&appsrc_rgb);
+	node.getParam("mountpoint_1", mountpoint_1);
+	node.getParam("mountpoint_2", mountpoint_2);
+	node.getParam("pipeline_1", pipeline_1);
+	node.getParam("pipeline_2", pipeline_2);
 
-	rtsp_server_add_url((char*)"/ir", (char*)"( appsrc name=imagesrc is-live=true do-timestamp=true caps=video/x-raw-bayer,format=(string)grbg,width=320,height=240,framerate=10/1 ! bayer2rgb ! ffmpegcolorspace ! x264enc tune=fastdecode speed-preset=slow bitrate=4096 ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )", (GstElement **)&appsrc_ir);
+	rtsp_server_add_url(mountpoint_1.c_str(), pipeline_1.c_str(), (GstElement **)&appsrc_rgb);
+	rtsp_server_add_url(mountpoint_2.c_str(), pipeline_2.c_str(), (GstElement **)&appsrc_ir);
 }
 
 
@@ -51,7 +59,7 @@ void Image2RTSPNodelet::irCallback(const sensor_msgs::Image::ConstPtr& msg) {
 }
 
 void Image2RTSPNodelet::url_connected(string url) {
-	printf("Client connected: %s\n", url.c_str());
+	ROS_INFO("Client connected: %s\n", url.c_str());
 
 	if (url == "/rgb") {
 		if (num_rgb == 0) {
@@ -69,7 +77,7 @@ void Image2RTSPNodelet::url_connected(string url) {
 }
 
 void Image2RTSPNodelet::url_disconnected(string url) {
-	printf("Client disconnected: %s\n", url.c_str());
+	ROS_INFO("Client disconnected: %s\n", url.c_str());
 
 	if (url == "/rgb") {
 		if (num_rgb > 0) num_rgb--;
