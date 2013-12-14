@@ -63,6 +63,8 @@ catkin_package(
 #  DEPENDS system_lib
 )
 
+SET ( CMAKE_CXX_FLAGS "-Wall" )
+
 ###########
 ## Build ##
 ###########
