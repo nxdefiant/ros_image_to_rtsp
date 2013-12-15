@@ -59,18 +59,22 @@ void Image2RTSPNodelet::irCallback(const sensor_msgs::Image::ConstPtr& msg) {
 }
 
 void Image2RTSPNodelet::url_connected(string url) {
+	string topic;
+
 	ROS_INFO("Client connected: %s\n", url.c_str());
 
 	if (url == "/rgb") {
 		if (num_rgb == 0) {
 			ros::NodeHandle& node = getPrivateNodeHandle();
-			sub_rgb = node.subscribe("/camera/rgb/image", 10, &Image2RTSPNodelet::rgbCallback, this);
+			node.getParam("topic_1", topic);
+			sub_rgb = node.subscribe(topic, 10, &Image2RTSPNodelet::rgbCallback, this);
 		}
 		num_rgb++;
 	} else if (url == "/ir") {
 		if (num_ir == 0) {
 			ros::NodeHandle& node = getPrivateNodeHandle();
-			sub_ir = node.subscribe("/camera/ir/image", 10, &Image2RTSPNodelet::irCallback, this);
+			node.getParam("topic_2", topic);
+			sub_ir = node.subscribe(topic, 10, &Image2RTSPNodelet::irCallback, this);
 		}
 		num_ir++;
 	}
