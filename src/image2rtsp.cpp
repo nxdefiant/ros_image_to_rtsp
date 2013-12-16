@@ -61,7 +61,7 @@ void Image2RTSPNodelet::irCallback(const sensor_msgs::Image::ConstPtr& msg) {
 void Image2RTSPNodelet::url_connected(string url) {
 	string topic;
 
-	ROS_INFO("Client connected: %s\n", url.c_str());
+	NODELET_INFO("Client connected: %s", url.c_str());
 
 	if (url == "/rgb") {
 		if (num_rgb == 0) {
@@ -81,7 +81,7 @@ void Image2RTSPNodelet::url_connected(string url) {
 }
 
 void Image2RTSPNodelet::url_disconnected(string url) {
-	ROS_INFO("Client disconnected: %s\n", url.c_str());
+	NODELET_INFO("Client disconnected: %s", url.c_str());
 
 	if (url == "/rgb") {
 		if (num_rgb > 0) num_rgb--;
@@ -96,6 +96,10 @@ void Image2RTSPNodelet::url_disconnected(string url) {
 			appsrc_ir = NULL;
 		}
 	}
+}
+
+void Image2RTSPNodelet::print_info(char *s) {
+	NODELET_INFO(s);
 }
 
 PLUGINLIB_EXPORT_CLASS(image2rtsp::Image2RTSPNodelet, nodelet::Nodelet)

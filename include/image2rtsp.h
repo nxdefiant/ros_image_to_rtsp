@@ -7,6 +7,7 @@ namespace image2rtsp {
 			void onInit();
 			void url_connected(std::string url);
 			void url_disconnected(std::string url);
+			void print_info(char *s);
 
 		private:
 			ros::Subscriber sub_rgb, sub_ir;

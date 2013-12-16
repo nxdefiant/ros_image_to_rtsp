@@ -43,7 +43,7 @@ static void client_options(GstRTSPClient *client, GstRTSPClientState *state, Ima
 
 
 static void new_client(GstRTSPServer *server, GstRTSPClient *client, Image2RTSPNodelet *nodelet) {
-	ROS_INFO("New client\n");
+	nodelet->print_info((char *)"New RTSP client");
 	g_signal_connect(client, "options-request", G_CALLBACK(client_options), nodelet);
 	g_signal_connect(client, "closed", G_CALLBACK(client_closed), nodelet);
 }
