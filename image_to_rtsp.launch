@@ -7,6 +7,6 @@
 
 		<param name="topic_2" type="str" value="/camera/ir/image" />
 		<param name="mountpoint_2" type="str" value="/ir" />
-		<param name="pipeline_2" type="str" value="( appsrc name=imagesrc is-live=true do-timestamp=true caps=video/x-raw-bayer,format=(string)grbg,width=320,height=240,framerate=10/1 ! bayer2rgb ! ffmpegcolorspace ! x264enc tune=fastdecode speed-preset=slow bitrate=4096 ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )" />
+		<param name="pipeline_2" type="str" value="( appsrc name=imagesrc is-live=true do-timestamp=true caps=video/x-raw-gray,bpp=16,depth=16,endianness=4321,width=320,height=240,framerate=10/1 ! ffmpegcolorspace ! x264enc tune=fastdecode speed-preset=slow bitrate=4096 ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )" />
         </node>
 </launch>
