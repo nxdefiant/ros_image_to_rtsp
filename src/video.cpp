@@ -33,12 +33,17 @@ void Image2RTSPNodelet::video_mainloop_start() {
 }
 
 
-static void client_closed(GstRTSPClient *client, Image2RTSPNodelet *nodelet) {
-	nodelet->url_disconnected(client->uri->abspath);
+static void client_options(GstRTSPClient *client, GstRTSPClientState *state, Image2RTSPNodelet *nodelet) {
+	if (state->uri) {
+		nodelet->url_connected(state->uri->abspath);
+	}
 }
 
-static void client_options(GstRTSPClient *client, GstRTSPClientState *state, Image2RTSPNodelet *nodelet) {
-	nodelet->url_connected(state->uri->abspath);
+
+static void client_closed(GstRTSPClient *client, Image2RTSPNodelet *nodelet) {
+	if (client->uri) {
+		nodelet->url_disconnected(client->uri->abspath);
+	}
 }
 
 
