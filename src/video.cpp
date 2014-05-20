@@ -53,6 +53,25 @@ static void new_client(GstRTSPServer *server, GstRTSPClient *client, Image2RTSPN
 	g_signal_connect(client, "closed", G_CALLBACK(client_closed), nodelet);
 }
 
+/* this function is periodically run to clean up the expired sessions from the pool. */
+static gboolean session_cleanup(Image2RTSPNodelet *nodelet, gboolean ignored)
+{
+	GstRTSPServer *server = nodelet->rtsp_server;
+	GstRTSPSessionPool *pool;
+	int num;
+
+	pool = gst_rtsp_server_get_session_pool(server);
+	num = gst_rtsp_session_pool_cleanup(pool);
+	g_object_unref(pool);
+
+	if (num > 0) {
+		char s[32];
+		snprintf(s, 32, (char *)"Sessions cleaned: %d", num);
+		nodelet->print_info(s);
+	}
+
+	return TRUE;
+}
 
 GstRTSPServer *Image2RTSPNodelet::rtsp_server_create() {
 	GstRTSPServer *server;
@@ -64,6 +83,9 @@ GstRTSPServer *Image2RTSPNodelet::rtsp_server_create() {
 	gst_rtsp_server_attach(server, NULL);
 
 	g_signal_connect(server, "client-connected", G_CALLBACK(new_client), this);
+
+	/* add a timeout for the session cleanup */
+	g_timeout_add_seconds(2, (GSourceFunc)session_cleanup, this);
 
 	return server;
 }

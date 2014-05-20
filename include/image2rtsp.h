@@ -4,6 +4,7 @@
 namespace image2rtsp {
 	class Image2RTSPNodelet : public nodelet::Nodelet {
 		public:
+			GstRTSPServer *rtsp_server;
 			void onInit();
 			void url_connected(std::string url);
 			void url_disconnected(std::string url);
@@ -12,7 +13,6 @@ namespace image2rtsp {
 		private:
 			ros::Subscriber sub_rgb, sub_ir;
 			GstAppSrc *appsrc_rgb, *appsrc_ir;
-			GstRTSPServer *rtsp_server;
 			int num_rgb, num_ir;
 
 			void rgbCallback(const sensor_msgs::Image::ConstPtr& msg);
