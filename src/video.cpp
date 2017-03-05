@@ -33,7 +33,7 @@ void Image2RTSPNodelet::video_mainloop_start() {
 }
 
 
-static void client_options(GstRTSPClient *client, GstRTSPClientState *state, Image2RTSPNodelet *nodelet) {
+static void client_options(GstRTSPClient *client, GstRTSPContext *state, Image2RTSPNodelet *nodelet) {
 	if (state->uri) {
 		nodelet->url_connected(state->uri->abspath);
 	}
@@ -41,8 +41,8 @@ static void client_options(GstRTSPClient *client, GstRTSPClientState *state, Ima
 
 
 static void client_closed(GstRTSPClient *client, Image2RTSPNodelet *nodelet) {
-	if (client->uri) {
-		nodelet->url_disconnected(client->uri->abspath);
+	if (client->priv->path) {
+		nodelet->url_disconnected(client->priv->path);
 	}
 }
 
@@ -95,18 +95,20 @@ GstRTSPServer *Image2RTSPNodelet::rtsp_server_create() {
  * pipeline and configure our appsrc */
 static void media_configure(GstRTSPMediaFactory *factory, GstRTSPMedia *media, GstElement **appsrc)
 {
-	GstElement *pipeline = media->pipeline;
+	GstElement *pipeline = media->priv->pipeline;
 	*appsrc = gst_bin_get_by_name(GST_BIN(pipeline), "imagesrc");
+	/* this instructs appsrc that we will be dealing with timed buffer */
+	gst_util_set_object_arg(G_OBJECT(*appsrc), "format", "time");
 }
 
 
 void Image2RTSPNodelet::rtsp_server_add_url(const char *url, const char *sPipeline, GstElement **appsrc) {
-	GstRTSPMediaMapping *mapping;
+	GstRTSPMountPoints *mounts;
 	GstRTSPMediaFactory *factory;
 
-	/* get the mapping for this server, every server has a default mapper object
-	 * that be used to map uri mount points to media factories */
-	mapping = gst_rtsp_server_get_media_mapping(rtsp_server);
+	/* get the mount points for this server, every server has a default object
+	* that be used to map uri mount points to media factories */
+	mounts = gst_rtsp_server_get_mount_points(rtsp_server);
 
 	/* make a media factory for a test stream. The default media factory can use
 	 * gst-launch syntax to create pipelines. 
@@ -121,9 +123,9 @@ void Image2RTSPNodelet::rtsp_server_add_url(const char *url, const char *sPipeli
 
 	gst_rtsp_media_factory_set_shared(factory, TRUE);
 
-	/* attach the test factory to the /test url */
-	gst_rtsp_media_mapping_add_factory(mapping, url, factory);
+	/* attach the factory to the url */
+	gst_rtsp_mount_points_add_factory(mounts, url, factory);
 
-	/* don't need the ref to the mapper anymore */
-	g_object_unref(mapping);
+	/* don't need the ref to the mounts anymore */
+	g_object_unref(mounts);
 }

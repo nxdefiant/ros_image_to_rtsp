@@ -11,8 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   nodelet
 )
-pkg_check_modules(GST gstreamer-0.10)
-pkg_check_modules(GSTRTSP gst-rtsp-server-0.10)
+pkg_check_modules(GST gstreamer-1.0)
+pkg_check_modules(GSTRTSP gstreamer-rtsp-server-1.0)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

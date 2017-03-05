@@ -40,20 +40,61 @@ void Image2RTSPNodelet::onInit() {
 
 void Image2RTSPNodelet::rgbCallback(const sensor_msgs::Image::ConstPtr& msg) {
 	GstBuffer *buf;
+	void *imgdata;
+#if GST_VERSION_MAJOR > 0
+	GstMapInfo map;
+	static GstClockTime timestamp=0;
+#endif
 
 	if (appsrc_rgb != NULL) {
 		buf = gst_buffer_new_and_alloc(msg->step*msg->height);
-		memcpy(buf->data, &msg->data[0], msg->step*msg->height);
+
+#if GST_VERSION_MAJOR > 0
+		gst_buffer_map(buf, &map, GST_MAP_READ);
+		imgdata = map.data;
+
+		GST_BUFFER_PTS(buf) = timestamp;
+		GST_BUFFER_DURATION(buf) = gst_util_uint64_scale_int(1, GST_SECOND, 15);
+		timestamp += GST_BUFFER_DURATION(buf);
+#else
+		imgdata = buf->data;
+#endif
+
+		memcpy(imgdata, &msg->data[0], msg->step*msg->height);
+
+#if GST_VERSION_MAJOR > 0
+		gst_buffer_unmap(buf, &map);
+#endif
 		gst_app_src_push_buffer(appsrc_rgb, buf);
 	}
 }
 
 void Image2RTSPNodelet::irCallback(const sensor_msgs::Image::ConstPtr& msg) {
 	GstBuffer *buf;
+	void *imgdata;
+#if GST_VERSION_MAJOR > 0
+	GstMapInfo map;
+	static GstClockTime timestamp=0;
+#endif
 
 	if (appsrc_ir != NULL) {
 		buf = gst_buffer_new_and_alloc(msg->step*msg->height);
-		memcpy(buf->data, &msg->data[0], msg->step*msg->height);
+
+#if GST_VERSION_MAJOR > 0
+		gst_buffer_map(buf, &map, GST_MAP_READ);
+		imgdata = map.data;
+
+		GST_BUFFER_PTS(buf) = timestamp;
+		GST_BUFFER_DURATION(buf) = gst_util_uint64_scale_int(1, GST_SECOND, 15);
+		timestamp += GST_BUFFER_DURATION(buf);
+#else
+		imgdata = buf->data;
+#endif
+
+		memcpy(imgdata, &msg->data[0], msg->step*msg->height);
+#if GST_VERSION_MAJOR > 0
+		gst_buffer_unmap(buf, &map);
+#endif
 		gst_app_src_push_buffer(appsrc_ir, buf);
 	}
 }
@@ -100,6 +141,10 @@ void Image2RTSPNodelet::url_disconnected(string url) {
 
 void Image2RTSPNodelet::print_info(char *s) {
 	NODELET_INFO(s);
+}
+
+void Image2RTSPNodelet::print_error(char *s) {
+	NODELET_ERROR(s);
 }
 
 PLUGINLIB_EXPORT_CLASS(image2rtsp::Image2RTSPNodelet, nodelet::Nodelet)
