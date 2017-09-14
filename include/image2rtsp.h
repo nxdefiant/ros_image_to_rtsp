@@ -121,7 +121,7 @@ struct _GstRTSPMediaPrivate
 	GstClockTime rtx_time;        /* protected by lock */
 	guint latency;                /* protected by lock */
 	GstClock *clock;              /* protected by lock */
-	GstRTSPPublishClockMode publish_clock_mode;
+	//GstRTSPPublishClockMode publish_clock_mode;
 };
 
 #endif

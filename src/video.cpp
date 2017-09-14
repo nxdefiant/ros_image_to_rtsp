@@ -95,10 +95,13 @@ GstRTSPServer *Image2RTSPNodelet::rtsp_server_create() {
  * pipeline and configure our appsrc */
 static void media_configure(GstRTSPMediaFactory *factory, GstRTSPMedia *media, GstElement **appsrc)
 {
-	GstElement *pipeline = media->priv->pipeline;
+	GstElement *pipeline = gst_rtsp_media_get_element (media);
+
 	*appsrc = gst_bin_get_by_name(GST_BIN(pipeline), "imagesrc");
 	/* this instructs appsrc that we will be dealing with timed buffer */
 	gst_util_set_object_arg(G_OBJECT(*appsrc), "format", "time");
+
+	gst_object_unref (pipeline);
 }
 
 
