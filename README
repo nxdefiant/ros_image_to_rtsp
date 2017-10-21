@@ -1,6 +1,6 @@
 image_to_rtsp
 ==========
-ROS Nodelet which uses GStreamer 0.10 RTSP Server to send sensor_msgs/Image messages via RTSP, for example to send a webcam image over network.
+ROS Nodelet which uses GStreamer 1.0 RTSP Server to send sensor_msgs/Image messages via RTSP, for example to send a webcam image over network.
 
 Mountpoint and GStreamer Pipeline is configured in launch file, example url to play the /rgb mountpoint:
 rtsp://hostname:8554/rgb 
