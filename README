@@ -4,3 +4,8 @@ ROS Nodelet which uses GStreamer 1.0 RTSP Server to send sensor_msgs/Image messa
 
 Mountpoint and GStreamer Pipeline is configured in launch file, example url to play the /rgb mountpoint:
 rtsp://hostname:8554/rgb 
+
+Requirements:
+----------
+- GStreamer RTSP Server, on Debian or Ubuntu install:
+  libgstrtspserver-1.0-dev gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
