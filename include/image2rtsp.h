@@ -26,40 +26,4 @@ namespace image2rtsp {
 	};
 }
 
-// From rtsp-client.c
-// There is currently no clean way to get the path
-struct _GstRTSPClientPrivate
-{
-	GMutex lock;                  /* protects everything else */
-	GMutex send_lock;
-	GMutex watch_lock;
-	GstRTSPConnection *connection;
-	GstRTSPWatch *watch;
-	GMainContext *watch_context;
-	guint close_seq;
-	gchar *server_ip;
-	gboolean is_ipv6;
-
-	GstRTSPClientSendFunc send_func;      /* protected by send_lock */
-	gpointer send_data;           /* protected by send_lock */
-	GDestroyNotify send_notify;   /* protected by send_lock */
-
-	GstRTSPSessionPool *session_pool;
-	gulong session_removed_id;
-	GstRTSPMountPoints *mount_points;
-	GstRTSPAuth *auth;
-	GstRTSPThreadPool *thread_pool;
-
-	/* used to cache the media in the last requested DESCRIBE so that
-	 * we can pick it up in the next SETUP immediately */
-	gchar *path;
-	GstRTSPMedia *media;
-
-	GHashTable *transports;
-	GList *sessions;
-	guint sessions_cookie;
-
-	gboolean drop_backlog;
-};
-
 #endif
