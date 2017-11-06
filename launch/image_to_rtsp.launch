@@ -5,10 +5,10 @@
 	<node pkg="nodelet" type="nodelet" name="Image2RTSPNodelet" args="load image2rtsp/Image2RTSPNodelet standalone_nodelet" output="screen">
 		<param name="topic_1" type="str" value="/camera/rgb/image_raw" />
 		<param name="mountpoint_1" type="str" value="/rgb" />
-		<param name="pipeline_1" type="str" value="( appsrc name=imagesrc is-live=true caps=video/x-raw,format=RGB,width=320,height=240,framerate=15/1 ! videoconvert ! x264enc tune=zerolatency speed-preset=ultrafast ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )" />
+		<param name="pipeline_1" type="str" value="( appsrc name=imagesrc is-live=true ! videoconvert ! x264enc tune=zerolatency speed-preset=ultrafast ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )" />
 
 		<param name="topic_2" type="str" value="/camera/ir/image" />
 		<param name="mountpoint_2" type="str" value="/ir" />
-		<param name="pipeline_2" type="str" value="( appsrc name=imagesrc is-live=true caps=video/x-raw,format=GRAY16_BE,width=320,height=240,framerate=15/1 ! videoconvert ! x264enc tune=zerolatency speed-preset=ultrafast ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )" />
+		<param name="pipeline_2" type="str" value="( appsrc name=imagesrc is-live=true ! videoconvert ! x264enc tune=zerolatency speed-preset=ultrafast ! h264parse ! rtph264pay pt=96 name=pay0 config-interval=1 )" />
         </node>
 </launch>

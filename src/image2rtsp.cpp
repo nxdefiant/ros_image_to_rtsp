@@ -45,8 +45,17 @@ void Image2RTSPNodelet::rgbCallback(const sensor_msgs::Image::ConstPtr& msg) {
 	GstMapInfo map;
 	static GstClockTime timestamp=0;
 #endif
+	GstCaps *caps;
 
 	if (appsrc_rgb != NULL) {
+		// Set caps from message
+		caps = gst_caps_new_simple ("video/x-raw",
+				"format", G_TYPE_STRING, "RGB",
+				"width", G_TYPE_INT, msg->width,
+				"height", G_TYPE_INT, msg->height,
+				NULL);
+		gst_app_src_set_caps(appsrc_rgb, caps);
+
 		buf = gst_buffer_new_and_alloc(msg->step*msg->height);
 
 #if GST_VERSION_MAJOR > 0
@@ -76,8 +85,17 @@ void Image2RTSPNodelet::irCallback(const sensor_msgs::Image::ConstPtr& msg) {
 	GstMapInfo map;
 	static GstClockTime timestamp=0;
 #endif
+	GstCaps *caps;
 
 	if (appsrc_ir != NULL) {
+		// Set caps from message
+		caps = gst_caps_new_simple ("video/x-raw",
+				"format", G_TYPE_STRING, "GRAY16_BE",
+				"width", G_TYPE_INT, msg->width,
+				"height", G_TYPE_INT, msg->height,
+				NULL);
+		gst_app_src_set_caps(appsrc_ir, caps);
+
 		buf = gst_buffer_new_and_alloc(msg->step*msg->height);
 
 #if GST_VERSION_MAJOR > 0
