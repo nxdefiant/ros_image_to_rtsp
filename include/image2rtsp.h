@@ -23,6 +23,7 @@ namespace image2rtsp {
 			GstRTSPServer *rtsp_server_create();
 			void set_appsrc_rgb(GstAppSrc *appsrc);
 			void set_appsrc_ir(GstAppSrc *appsrc);
+			void get_format(const char *ros_encoding, char **gst_type, char **gst_format);
 	};
 }
 

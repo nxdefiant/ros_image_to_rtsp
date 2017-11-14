@@ -19,6 +19,11 @@ void Image2RTSPNodelet::onInit() {
 
 	NODELET_DEBUG("Initializing image2rtsp nodelet...");
 
+	if (getenv((char*)"GST_DEBUG") == NULL) {
+		// set GST_DEBUG to warning if unset
+		putenv((char*)"GST_DEBUG=*:2");
+	}
+
 	num_rgb = 0;
 	appsrc_rgb = NULL;
 	num_ir = 0;
@@ -37,6 +42,22 @@ void Image2RTSPNodelet::onInit() {
 	rtsp_server_add_url(mountpoint_2.c_str(), pipeline_2.c_str(), (GstElement **)&appsrc_ir);
 }
 
+/**
+ * Gets the gstreamer format for the corresponding ros image encoding
+ */
+void Image2RTSPNodelet::get_format(const char *ros_encoding, char **gst_type, char **gst_format) {
+	*gst_type=(char*)"video/x-raw";
+	if (strcmp(ros_encoding, "rgb8") == 0) {
+		*gst_format=(char*)"RGB";
+	} else if (strcmp(ros_encoding, "mono16") == 0) {
+		*gst_format=(char*)"GRAY16_BE";
+	} else if (strcmp(ros_encoding, "bayer_grbg8") == 0) {
+		*gst_type=(char*)"video/x-bayer";
+		*gst_format=(char*)"grbg";
+	} else {
+		NODELET_ERROR("Unsupported image format %s\n", ros_encoding);
+	}
+}
 
 void Image2RTSPNodelet::rgbCallback(const sensor_msgs::Image::ConstPtr& msg) {
 	GstBuffer *buf;
@@ -46,11 +67,13 @@ void Image2RTSPNodelet::rgbCallback(const sensor_msgs::Image::ConstPtr& msg) {
 	static GstClockTime timestamp=0;
 #endif
 	GstCaps *caps;
+	char *gst_type, *gst_format=(char *)"";
 
 	if (appsrc_rgb != NULL) {
 		// Set caps from message
-		caps = gst_caps_new_simple ("video/x-raw",
-				"format", G_TYPE_STRING, "RGB",
+		get_format(msg->encoding.c_str(), &gst_type, &gst_format);
+		caps = gst_caps_new_simple (gst_type,
+				"format", G_TYPE_STRING, gst_format,
 				"width", G_TYPE_INT, msg->width,
 				"height", G_TYPE_INT, msg->height,
 				NULL);
@@ -86,11 +109,13 @@ void Image2RTSPNodelet::irCallback(const sensor_msgs::Image::ConstPtr& msg) {
 	static GstClockTime timestamp=0;
 #endif
 	GstCaps *caps;
+	char *gst_type, *gst_format=(char *)"";
 
 	if (appsrc_ir != NULL) {
 		// Set caps from message
-		caps = gst_caps_new_simple ("video/x-raw",
-				"format", G_TYPE_STRING, "GRAY16_BE",
+		get_format(msg->encoding.c_str(), &gst_type, &gst_format);
+		caps = gst_caps_new_simple (gst_type,
+				"format", G_TYPE_STRING, gst_format,
 				"width", G_TYPE_INT, msg->width,
 				"height", G_TYPE_INT, msg->height,
 				NULL);
