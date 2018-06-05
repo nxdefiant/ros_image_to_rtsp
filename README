@@ -1,17 +1,1 @@
-image_to_rtsp
-==========
-ROS Nodelet which uses GStreamer 1.0 RTSP Server to send sensor_msgs/Image messages via RTSP, for example to send a webcam image over network.
-
-Mountpoint and GStreamer Pipeline is configured in launch file, example url to play the /rgb mountpoint:
-rtsp://hostname:8554/rgb 
-
-Requirements:
-----------
-- GStreamer RTSP Server, on Debian or Ubuntu install:
-  libgstrtspserver-1.0-dev gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly
-
-Supported ROS video encodings:
-----------
-- rgb8: Default image encoding
-- mono16: Used in ir images
-- bayer_grbg8: Additionally needs the element bayer2rgb in the gstreamer pipeline
+Repository moved to gitlab: https://gitlab.com/Humpelstilzchen/ros_image_to_rtsp
